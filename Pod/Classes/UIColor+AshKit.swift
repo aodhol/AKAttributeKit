@@ -21,7 +21,7 @@ public extension UIColor {
     
     Example: `#FF0000FF` for Red, `#FFFF00FF` for Yellow
     */
-    public var hexString:String? {
+    internal var hexString:String? {
         let nComp = self.cgColor.numberOfComponents
         let comp = self.cgColor.components
         

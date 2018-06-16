@@ -6,14 +6,14 @@
 //  Copyright (c) 2014 WNeeds. All rights reserved.
 //
 
-import UIKit
 import Foundation
+import UIKit
 
 /**
 AKAttributeKit is to help you to create attributed string effortlessly.
 It parses predefined custom tags from within string you provide and
 attribute the tagged parts with the supplied value (as tag parameter).
-
+ 
 DEPENDENCIES:
 1. String+AKExtension.swift
 2. UIColor+AKExtension.swift
@@ -21,14 +21,13 @@ DEPENDENCIES:
 */
 
 open class AKAttributeKit {
-    
     /*
     Supported List of NS**AttributeName
     ------------------------------------------------------
-    
+     
     This is not part of Documentation comment. This is only for developer
     to track which is supported so far and which is not supported yet.
-    
+     
     [x] NSFontAttributeName - UIFont, default Helvetica(Neue) 12
     [ ] NSParagraphStyleAttributeName - NSParagraphStyle, default defaultParagraphStyle
     [x] NSForegroundColorAttributeName - UIColor, default blackColor
@@ -55,12 +54,12 @@ open class AKAttributeKit {
     /**
     AttributeType is basically the tags which represents a NS*AttributeName with short suitable name.
     See every tag for specific details.
-    
+     
     Every tag takes a param of any of the following types. In some cases, param can be omitted which
     is indicated as `Optional` beside param-type.
-    
+     
     **Param Types**
-    
+     
     - ### Int
       Any integer value supported by respective attribute
     - ### Float
@@ -75,79 +74,85 @@ open class AKAttributeKit {
     - ### Link
       String of any valid URL format
     */
-    public enum AttributeType:String {
+    public enum AttributeType: String {
         /// #### Anchor/Link.
         /// Param: Link
         /// Ex: `<a http://google.com>`
-        case a = "a"
+        case a
         /// #### Baseline offset
         /// Param: Float
-        case base = "base"
+        case base
         /// #### BackgroundColor
         /// Param: Color
         /// Ex: `<bg #ffffff>` or `<bg 255|255|255>`
-        case bg = "bg"
+        case bg
         /// #### Expansion
         /// Param: Float
-        case ex = "ex"
+        case ex
         /// #### ForegroundColor
         /// Param: Color
         /// Ex: `<fg #ffffff>` or `<fg 255|255|255>`
-        case fg = "fg"
+        case fg
         /// #### Font
         /// Param: Font (fontName|fontSize)
         /// Ex: `<font Arial|18>`
-        case font = "font"
+        case font
         /// #### Obliqueness
         /// Param: Float
-        case i = "i"
+        case i
         /// #### Kerning
         /// Param: Float
-        case k = "k"
+        case k
         /// #### Stroke color
         /// Param: Color
-        case sc = "sc"
+        case sc
         /// #### Stroke width
         /// Param: Float (percent)
-        case sw = "sw"
+        case sw
         /// #### Strike through
         /// Param: Int (Optional)
         /// Ex: `<t>` or `<t 1>`
-        case t = "t"
+        case t
         /// #### Strike through color
         /// Param: Color
         /// Ex: `<tc #f00>`
-        case tc = "tc"
+        case tc
         /// #### Underline
         /// Param: Int (Optional)
         /// Ex: `<u>` or `<u \(NSUnderlineStyle.StyleDouble.rawValue | NSUnderlineStyle.PatternDot.rawValue)>`
-        case u = "u"
+        case u
         /// #### Underline color
         /// Param: Color
         /// Ex: `<uc #f00>`
-        case uc = "uc"
+        case uc
         
-        var name: String {
-            switch(self) {
-            case .a    : return NSLinkAttributeName
-            case .base : return NSBaselineOffsetAttributeName
-            case .bg   : return NSBackgroundColorAttributeName
-            case .ex   : return NSExpansionAttributeName
-            case .fg   : return NSForegroundColorAttributeName
-            case .font : return NSFontAttributeName
-            case .i    : return NSObliquenessAttributeName
-            case .k    : return NSKernAttributeName
-            case .sc   : return NSStrokeColorAttributeName
-            case .sw   : return NSStrokeWidthAttributeName
-            case .t    : return NSStrikethroughStyleAttributeName
-            case .tc   : return NSStrikethroughColorAttributeName
-            case .u    : return NSUnderlineStyleAttributeName
-            case .uc   : return NSUnderlineColorAttributeName
+        case sh
+        /// #### Shadow
+        /// Param: Shadow
+        /// Ex: `<sh #foo|3|3>`
+        
+        var name: NSAttributedStringKey {
+            switch self {
+            case .a: return NSAttributedStringKey.link
+            case .base: return NSAttributedStringKey.baselineOffset
+            case .bg: return NSAttributedStringKey.backgroundColor
+            case .ex: return NSAttributedStringKey.expansion
+            case .fg: return NSAttributedStringKey.foregroundColor
+            case .font: return NSAttributedStringKey.font
+            case .i: return NSAttributedStringKey.obliqueness
+            case .k: return NSAttributedStringKey.kern
+            case .sc: return NSAttributedStringKey.strokeColor
+            case .sw: return NSAttributedStringKey.strokeWidth
+            case .sh: return NSAttributedStringKey.shadow
+            case .t: return NSAttributedStringKey.strikethroughStyle
+            case .tc: return NSAttributedStringKey.strikethroughColor
+            case .u: return NSAttributedStringKey.underlineStyle
+            case .uc: return NSAttributedStringKey.underlineColor
             }
         }
         
-        func valueForParams(_ param:String)->AnyObject? {
-            switch(self) {
+        func valueForParams(_ param: String) -> AnyObject? {
+            switch self {
             case .bg, .fg, .sc, .tc, .uc:
                 return AKAttributeKit.colorFromString(param)
             case .u, .t:
@@ -160,6 +165,20 @@ open class AKAttributeKit {
                 return AKAttributeKit.fontFromString(param)
             case .a:
                 return URL(string: param) as AnyObject?
+            case .sh:
+                var components = param.components(separatedBy: "|")
+                
+                let shadow = NSShadow()
+                let color = AKAttributeKit.colorFromString(components[0])
+                let w: CGFloat = (CGFloat(Float(components[0]) ?? 0.25))
+                let h: CGFloat = (CGFloat(Float(components[1]) ?? 0.25))
+                let r: CGFloat = (CGFloat(Float(components[2]) ?? 0.25))
+                
+                shadow.shadowColor = color
+                shadow.shadowOffset = CGSize(width: w, height: h)
+                shadow.shadowBlurRadius = r
+                
+                return shadow as AnyObject
             }
         }
     }
@@ -178,7 +197,7 @@ open class AKAttributeKit {
         private func processWholeTag() {
             isOpeningTag = !wholeTag.hasPrefix("</")
             
-            let strippedTag = wholeTag.removing(prefix: isOpeningTag ? "<":"</").removing(suffix: ">").trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
+            let strippedTag = wholeTag.removing(prefix: isOpeningTag ? "<" : "</").removing(suffix: ">").trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
             name = strippedTag.components(separatedBy: CharacterSet.whitespacesAndNewlines).first ?? ""
             if isOpeningTag {
                 paramString = strippedTag.removing(prefix: name).trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
@@ -193,9 +212,9 @@ open class AKAttributeKit {
         }
     }
     
-    public class func parseString(_ str:String)->NSMutableAttributedString {
+    public class func parseString(_ str: String) -> NSMutableAttributedString {
         let tagRegex = "</?[a-zA-Z][^<>]*>"
-        var tagQueue:[AKAttributeTag] = []
+        var tagQueue: [AKAttributeTag] = []
         var attrStr = NSMutableAttributedString(string: str)
         
         if let regex = try? NSRegularExpression(pattern: tagRegex, options: .dotMatchesLineSeparators) {
@@ -224,7 +243,7 @@ open class AKAttributeKit {
             func removeTag(index: Int) {
                 let tag = tagQueue[index]
                 attrStr.replaceCharacters(in: tag.range, with: NSAttributedString())
-                let nextIndex = index+1
+                let nextIndex = index + 1
                 if nextIndex < tagQueue.count {
                     for tIndex in nextIndex..<tagQueue.count {
                         tagQueue[tIndex].range.location -= tag.range.length
@@ -244,18 +263,17 @@ open class AKAttributeKit {
                         let closingTag = tagQueue[closeIndex]
                         removeTag(index: closeIndex)
                         
-                        let attrName:String = attribute.name
-                        let attrValue:Any? = attribute.valueForParams(tag.paramString ?? "")
+                        let attrName = attribute.name
+                        let attrValue: Any? = attribute.valueForParams(tag.paramString ?? "")
                         
                         if let attrValue = attrValue {
                             let location = tag.range.location
-                            let length = closingTag.range.location-location
+                            let length = closingTag.range.location - location
                             print(location, length)
                             attrStr.addAttribute(attrName, value: attrValue, range: NSRange(location: location, length: length))
                         }
                     }
                 }
-                
             }
         }
         
@@ -264,19 +282,19 @@ open class AKAttributeKit {
 }
 
 extension AKAttributeKit {
-    
     //---------------------------------------------------
+    
     // MARK: - Color Utils
+    
     //---------------------------------------------------
     
-    fileprivate class func colorFromString(_ colorStr:String)->UIColor?
-    {
-        var components = colorStr.components(separatedBy: "|");
+    fileprivate class func colorFromString(_ colorStr: String) -> UIColor? {
+        var components = colorStr.components(separatedBy: "|")
         if components.count >= 3 {
-            let r = self.toColorPart(components[0])
-            let g = self.toColorPart(components[1])
-            let b = self.toColorPart(components[2])
-            let a = components.count >= 4 ? self.toColorPart(components[3]) : 1
+            let r = toColorPart(components[0])
+            let g = toColorPart(components[1])
+            let b = toColorPart(components[2])
+            let a = components.count >= 4 ? toColorPart(components[3]) : 1
             return UIColor(red: r, green: g, blue: b, alpha: a)
         } else if components.count == 1 {
             return try? UIColor(hexString: components[0])
@@ -284,21 +302,21 @@ extension AKAttributeKit {
         return nil
     }
     
-    fileprivate class func toColorPart(_ strValue:String)->CGFloat
-    {
+    fileprivate class func toColorPart(_ strValue: String) -> CGFloat {
         let value = strValue.toFailSafeInt()
-        var fVal:Float = Float(value)
+        var fVal: Float = Float(value)
         fVal /= 255.0
-        return CGFloat(fVal);
+        return CGFloat(fVal)
     }
     
     //---------------------------------------------------
+    
     // MARK: - Font Utils
+    
     //---------------------------------------------------
     
-    fileprivate class func fontFromString(_ fontStr:String)->UIFont?
-    {
-        var components = fontStr.components(separatedBy: "|");
+    fileprivate class func fontFromString(_ fontStr: String) -> UIFont? {
+        var components = fontStr.components(separatedBy: "|")
         if components.count >= 2 {
             let fontName = components[0].trim()
             let fontSize = components[1].toFailSafeInt()
@@ -306,7 +324,6 @@ extension AKAttributeKit {
                 return font
             }
         }
-        return nil;
+        return nil
     }
 }
-

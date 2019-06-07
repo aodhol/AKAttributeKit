@@ -33,15 +33,9 @@ Pod::Spec.new do |s|
   s.source           = { :git => "https://github.com/ashikahmad/AKAttributeKit.git", :tag => s.version.to_s }
   s.social_media_url = 'https://twitter.com/ashik_ahmad'
 
-  s.platform     = :ios, '8.0'
+  s.platform     = :ios, '10.0'
   s.requires_arc = true
+  s.swift_version = '5.0'
 
   s.source_files = 'Pod/Classes/**/*'
-  # s.resource_bundles = {
-  #   'AKAttributeKit' => ['Pod/Assets/*.png']
-  # }
-
-  # s.public_header_files = 'Pod/Classes/**/*.h'
-  # s.frameworks = 'UIKit', 'MapKit'
-  # s.dependency 'AFNetworking', '~> 2.3'
 end

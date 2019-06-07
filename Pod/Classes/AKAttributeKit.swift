@@ -1,79 +1,71 @@
-//
-//  AKAttributeKit.swift
-//  WNPopTipViewShowcase
-//
-//  Created by Ashik Ahmad on 11/1/14.
-//  Copyright (c) 2014 WNeeds. All rights reserved.
-//
-
 import Foundation
 import UIKit
 
 /**
-AKAttributeKit is to help you to create attributed string effortlessly.
-It parses predefined custom tags from within string you provide and
-attribute the tagged parts with the supplied value (as tag parameter).
+ AKAttributeKit is to help you to create attributed string effortlessly.
+ It parses predefined custom tags from within string you provide and
+ attribute the tagged parts with the supplied value (as tag parameter).
  
-DEPENDENCIES:
-1. String+AKExtension.swift
-2. UIColor+AKExtension.swift
-3. UIFont+AKExtension.swift
-*/
+ DEPENDENCIES:
+ 1. String+AKExtension.swift
+ 2. UIColor+AKExtension.swift
+ 3. UIFont+AKExtension.swift
+ */
 
 open class AKAttributeKit {
     /*
-    Supported List of NS**AttributeName
-    ------------------------------------------------------
+     Supported List of NS**AttributeName
+     ------------------------------------------------------
      
-    This is not part of Documentation comment. This is only for developer
-    to track which is supported so far and which is not supported yet.
+     This is not part of Documentation comment. This is only for developer
+     to track which is supported so far and which is not supported yet.
      
-    [x] NSFontAttributeName - UIFont, default Helvetica(Neue) 12
-    [ ] NSParagraphStyleAttributeName - NSParagraphStyle, default defaultParagraphStyle
-    [x] NSForegroundColorAttributeName - UIColor, default blackColor
-    [x] NSBackgroundColorAttributeName - UIColor, default nil: no background
-    [ ] NSLigatureAttributeName - NSNumber containing integer, default 1: default ligatures, 0: no ligatures
-    [x] NSKernAttributeName - NSNumber containing floating point value, in points; amount to modify default kerning. 0 means kerning is disabled.
-    [x] NSStrikethroughStyleAttributeName - NSNumber containing integer, default 0: no strikethrough
-    [x] NSUnderlineStyleAttributeName - NSNumber containing integer, default 0: no underline
-    [x] NSStrokeColorAttributeName - UIColor, default nil: same as foreground color
-    [x] NSStrokeWidthAttributeName - NSNumber containing floating point value, in percent of font point size, default 0: no stroke; positive for stroke alone, negative for stroke and fill (a typical value for outlined text would be 3.0)
-    [ ] NSShadowAttributeName - NSShadow, default nil: no shadow
-    [ ] NSTextEffectAttributeName - NSString, default nil: no text effect
-    [ ] NSAttachmentAttributeName - NSTextAttachment, default nil
-    [x] NSLinkAttributeName - NSURL (preferred) or NSString
-    [x] NSBaselineOffsetAttributeName - NSNumber containing floating point value, in points; offset from baseline, default 0
-    [x] NSUnderlineColorAttributeName - UIColor, default nil: same as foreground color
-    [x] NSStrikethroughColorAttributeName - UIColor, default nil: same as foreground color
-    [x] NSObliquenessAttributeName - NSNumber containing floating point value; skew to be applied to glyphs, default 0: no skew
-    [x] NSExpansionAttributeName - NSNumber containing floating point value; log of expansion factor to be applied to glyphs, default 0: no expansion
-    [ ] NSWritingDirectionAttributeName  - NSArray of NSNumbers representing the nested levels of writing direction overrides as defined by Unicode LRE, RLE, LRO, and RLO characters.  The control characters can be obtained by masking NSWritingDirection and NSTextWritingDirection values.  LRE: NSWritingDirectionLeftToRight|NSWritingDirectionEmbedding, RLE: NSWritingDirectionRightToLeft|NSWritingDirectionEmbedding, LRO: NSWritingDirectionLeftToRight|NSWritingDirectionOverride, RLO: NSWritingDirectionRightToLeft|NSWritingDirectionOverride,
-    [ ] NSVerticalGlyphFormAttributeName - An NSNumber containing an integer value.  0 means horizontal text.  1 indicates vertical text.  If not specified, it could follow higher-level vertical orientation settings.  Currently on iOS, it's always horizontal.  The behavior for any other value is undefined.
-    */
+     [x] NSFontAttributeName - UIFont, default Helvetica(Neue) 12
+     [ ] NSParagraphStyleAttributeName - NSParagraphStyle, default defaultParagraphStyle
+     [x] NSForegroundColorAttributeName - UIColor, default blackColor
+     [x] NSBackgroundColorAttributeName - UIColor, default nil: no background
+     [ ] NSLigatureAttributeName - NSNumber containing integer, default 1: default ligatures, 0: no ligatures
+     [x] NSKernAttributeName - NSNumber containing floating point value, in points; amount to modify default kerning. 0 means kerning is disabled.
+     [x] NSStrikethroughStyleAttributeName - NSNumber containing integer, default 0: no strikethrough
+     [x] NSUnderlineStyleAttributeName - NSNumber containing integer, default 0: no underline
+     [x] NSStrokeColorAttributeName - UIColor, default nil: same as foreground color
+     [x] NSStrokeWidthAttributeName - NSNumber containing floating point value, in percent of font point size, default 0: no stroke; positive for stroke alone, negative for stroke and fill (a typical value for outlined text would be 3.0)
+     [ ] NSShadowAttributeName - NSShadow, default nil: no shadow
+     [ ] NSTextEffectAttributeName - NSString, default nil: no text effect
+     [ ] NSAttachmentAttributeName - NSTextAttachment, default nil
+     [x] NSLinkAttributeName - NSURL (preferred) or NSString
+     [x] NSBaselineOffsetAttributeName - NSNumber containing floating point value, in points; offset from baseline, default 0
+     [x] NSUnderlineColorAttributeName - UIColor, default nil: same as foreground color
+     [x] NSStrikethroughColorAttributeName - UIColor, default nil: same as foreground color
+     [x] NSObliquenessAttributeName - NSNumber containing floating point value; skew to be applied to glyphs, default 0: no skew
+     [x] NSExpansionAttributeName - NSNumber containing floating point value; log of expansion factor to be applied to glyphs, default 0: no expansion
+     [ ] NSWritingDirectionAttributeName  - NSArray of NSNumbers representing the nested levels of writing direction overrides as defined by Unicode LRE, RLE, LRO, and RLO characters.  The control characters can be obtained by masking NSWritingDirection and NSTextWritingDirection values.  LRE: NSWritingDirectionLeftToRight|NSWritingDirectionEmbedding, RLE: NSWritingDirectionRightToLeft|NSWritingDirectionEmbedding, LRO: NSWritingDirectionLeftToRight|NSWritingDirectionOverride, RLO: NSWritingDirectionRightToLeft|NSWritingDirectionOverride,
+     [ ] NSVerticalGlyphFormAttributeName - An NSNumber containing an integer value.  0 means horizontal text.  1 indicates vertical text.  If not specified, it could follow higher-level vertical orientation settings.  Currently on iOS, it's always horizontal.  The behavior for any other value is undefined.
+     */
     
     /**
-    AttributeType is basically the tags which represents a NS*AttributeName with short suitable name.
-    See every tag for specific details.
+     AttributeType is basically the tags which represents a NS*AttributeName with short suitable name.
+     See every tag for specific details.
      
-    Every tag takes a param of any of the following types. In some cases, param can be omitted which
-    is indicated as `Optional` beside param-type.
+     Every tag takes a param of any of the following types. In some cases, param can be omitted which
+     is indicated as `Optional` beside param-type.
      
-    **Param Types**
+     **Param Types**
      
-    - ### Int
-      Any integer value supported by respective attribute
-    - ### Float
-      Any float value
-    - ### Color
-      1. **Hex formats:** `rgb`, `rgba`, `rrggbb`, `rrggbbaa` with or without `0x` or `#` prefix
-      2. **Integer sequence:** `r|g|b|a` param sequence, where all params in sequence are Int ranges from 0-255.
-      3. **Insert UIColor:** Directly insert UIColor into swift string like `<tag \(myColor)>` where myColor is any UIColor other than `colorWithPatternImage`.
-    - ### Font
-      1. **Param sequence:** `fontName|fontSize` param sequence where fontName is String and fontSize is Float
-      2. **Insert UIFont:** Directly insert UIFont into swift string like `<font \(myFont.asAKAttribute())>`
-    - ### Link
-      String of any valid URL format
-    */
+     - ### Int
+       Any integer value supported by respective attribute
+     - ### Float
+       Any float value
+     - ### Color
+       1. **Hex formats:** `rgb`, `rgba`, `rrggbb`, `rrggbbaa` with or without `0x` or `#` prefix
+       2. **Integer sequence:** `r|g|b|a` param sequence, where all params in sequence are Int ranges from 0-255.
+       3. **Insert UIColor:** Directly insert UIColor into swift string like `<tag \(myColor)>` where myColor is any UIColor other than `colorWithPatternImage`.
+     - ### Font
+       1. **Param sequence:** `fontName|fontSize` param sequence where fontName is String and fontSize is Float
+       2. **Insert UIFont:** Directly insert UIFont into swift string like `<font \(myFont.asAKAttribute())>`
+     - ### Link
+       String of any valid URL format
+     */
     public enum AttributeType: String {
         /// #### Anchor/Link.
         /// Param: Link
@@ -131,23 +123,23 @@ open class AKAttributeKit {
         /// Param: Shadow
         /// Ex: `<sh #foo|3|3>`
         
-        var name: NSAttributedStringKey {
+        var name: NSAttributedString.Key {
             switch self {
-            case .a: return NSAttributedStringKey.link
-            case .base: return NSAttributedStringKey.baselineOffset
-            case .bg: return NSAttributedStringKey.backgroundColor
-            case .ex: return NSAttributedStringKey.expansion
-            case .fg: return NSAttributedStringKey.foregroundColor
-            case .font: return NSAttributedStringKey.font
-            case .i: return NSAttributedStringKey.obliqueness
-            case .k: return NSAttributedStringKey.kern
-            case .sc: return NSAttributedStringKey.strokeColor
-            case .sw: return NSAttributedStringKey.strokeWidth
-            case .sh: return NSAttributedStringKey.shadow
-            case .t: return NSAttributedStringKey.strikethroughStyle
-            case .tc: return NSAttributedStringKey.strikethroughColor
-            case .u: return NSAttributedStringKey.underlineStyle
-            case .uc: return NSAttributedStringKey.underlineColor
+            case .a: return NSAttributedString.Key.link
+            case .base: return NSAttributedString.Key.baselineOffset
+            case .bg: return NSAttributedString.Key.backgroundColor
+            case .ex: return NSAttributedString.Key.expansion
+            case .fg: return NSAttributedString.Key.foregroundColor
+            case .font: return NSAttributedString.Key.font
+            case .i: return NSAttributedString.Key.obliqueness
+            case .k: return NSAttributedString.Key.kern
+            case .sc: return NSAttributedString.Key.strokeColor
+            case .sw: return NSAttributedString.Key.strokeWidth
+            case .sh: return NSAttributedString.Key.shadow
+            case .t: return NSAttributedString.Key.strikethroughStyle
+            case .tc: return NSAttributedString.Key.strikethroughColor
+            case .u: return NSAttributedString.Key.underlineStyle
+            case .uc: return NSAttributedString.Key.underlineColor
             }
         }
         
@@ -170,9 +162,9 @@ open class AKAttributeKit {
                 
                 let shadow = NSShadow()
                 let color = AKAttributeKit.colorFromString(components[0])
-                let w: CGFloat = (CGFloat(Float(components[0]) ?? 0.25))
-                let h: CGFloat = (CGFloat(Float(components[1]) ?? 0.25))
-                let r: CGFloat = (CGFloat(Float(components[2]) ?? 0.25))
+                let w: CGFloat = CGFloat(Float(components[0]) ?? 0.25)
+                let h: CGFloat = CGFloat(Float(components[1]) ?? 0.25)
+                let r: CGFloat = CGFloat(Float(components[2]) ?? 0.25)
                 
                 shadow.shadowColor = color
                 shadow.shadowOffset = CGSize(width: w, height: h)
@@ -201,7 +193,7 @@ open class AKAttributeKit {
             name = strippedTag.components(separatedBy: CharacterSet.whitespacesAndNewlines).first ?? ""
             if isOpeningTag {
                 paramString = strippedTag.removing(prefix: name).trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
-                if paramString?.length == 0 { paramString = nil }
+                if paramString?.isEmpty == true { paramString = nil }
             }
         }
         
@@ -227,7 +219,7 @@ open class AKAttributeKit {
                 if tag.isOpeningTag {
                     tagQueue.append(tag)
                 } else {
-                    for index in (0..<tagQueue.count).reversed() {
+                    for index in (0 ..< tagQueue.count).reversed() {
                         let openTag = tagQueue[index]
                         if !openTag.isOpeningTag { continue }
                         if openTag.endingTagIndex != nil { continue }
@@ -245,14 +237,14 @@ open class AKAttributeKit {
                 attrStr.replaceCharacters(in: tag.range, with: NSAttributedString())
                 let nextIndex = index + 1
                 if nextIndex < tagQueue.count {
-                    for tIndex in nextIndex..<tagQueue.count {
+                    for tIndex in nextIndex ..< tagQueue.count {
                         tagQueue[tIndex].range.location -= tag.range.length
                     }
                 }
             }
             
             // Apply all tags starting from outside
-            for index in 0..<tagQueue.count {
+            for index in 0 ..< tagQueue.count {
                 let tag = tagQueue[index]
                 if tag.isOpeningTag {
                     guard let attribute = AttributeType(rawValue: tag.name) else { continue }
@@ -282,11 +274,11 @@ open class AKAttributeKit {
 }
 
 extension AKAttributeKit {
-    //---------------------------------------------------
+    // ---------------------------------------------------
     
     // MARK: - Color Utils
     
-    //---------------------------------------------------
+    // ---------------------------------------------------
     
     fileprivate class func colorFromString(_ colorStr: String) -> UIColor? {
         var components = colorStr.components(separatedBy: "|")
@@ -309,11 +301,11 @@ extension AKAttributeKit {
         return CGFloat(fVal)
     }
     
-    //---------------------------------------------------
+    // ---------------------------------------------------
     
     // MARK: - Font Utils
     
-    //---------------------------------------------------
+    // ---------------------------------------------------
     
     fileprivate class func fontFromString(_ fontStr: String) -> UIFont? {
         var components = fontStr.components(separatedBy: "|")

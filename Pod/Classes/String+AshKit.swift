@@ -1,11 +1,3 @@
-//
-//  String+AKExtension.swift
-//  AKAttributeKitDemo
-//
-//  Created by Ashik Ahmad on 11/8/14.
-//  Copyright (c) 2014 WNeeds. All rights reserved.
-//
-
 import Foundation
 import UIKit
 
@@ -16,16 +8,12 @@ public extension String {
     
     // ------------------------------------------------------
     
-    internal var length: Int {
-        return characters.count
-    }
-    
     internal func trim() -> String {
         return trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
     }
     
     internal var fullRange: Range<String.Index> {
-        return startIndex..<endIndex
+        return startIndex ..< endIndex
     }
     
     // ------------------------------------------------------
@@ -50,7 +38,7 @@ public extension String {
     
     internal func removing(prefix: String) -> String {
         if hasPrefix(prefix) {
-            let start = index(startIndex, offsetBy: prefix.characters.count)
+            let start = index(startIndex, offsetBy: prefix.count)
             return substring(from: start)
         }
         return self
@@ -58,7 +46,7 @@ public extension String {
     
     internal func removing(suffix: String) -> String {
         if hasSuffix(suffix) {
-            let end = index(startIndex, offsetBy: characters.count - suffix.characters.count)
+            let end = index(startIndex, offsetBy: count - suffix.count)
             return substring(to: end)
         }
         return self

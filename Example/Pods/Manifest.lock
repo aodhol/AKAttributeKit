@@ -1,16 +1,16 @@
 PODS:
-  - AKAttributeKit (0.3.0)
+  - AKAttributeKit (0.3.1)
 
 DEPENDENCIES:
   - AKAttributeKit (from `../`)
 
 EXTERNAL SOURCES:
   AKAttributeKit:
-    :path: ../
+    :path: "../"
 
 SPEC CHECKSUMS:
-  AKAttributeKit: c8305a72ef7d1c73d24c829131270003b8b52118
+  AKAttributeKit: e665f6e83b36d60eca7b438f0b23bf1fb3f302ee
 
 PODFILE CHECKSUM: 49b5d7888b316abcd7e5a9213e4e5d76a0882a92
 
-COCOAPODS: 1.1.1
+COCOAPODS: 1.7.1
